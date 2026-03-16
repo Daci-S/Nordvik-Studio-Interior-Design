@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nordvik Studio — Interior Design</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #F7F4EF;
+    --warm-white: #FDFCFA;
+    --stone: #C8BFB0;
+    --ash: #8E8880;
+    --charcoal: #2D2926;
+    --dark: #1A1714;
+    --accent: #8B7355;
+    --accent-light: #C4A882;
+    --font-display: 'Cormorant Garamond', serif;
+    --font-body: 'Jost', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--cream);
+    color: var(--charcoal);
+    font-family: var(--font-body);
+    font-weight: 300;
+    cursor: none;
+    overflow-x: hidden;
+  }
+
+  /* CUSTOM CURSOR */
+  .cursor {
+    width: 10px; height: 10px;
+    background: var(--charcoal);
+    border-radius: 50%;
+    position: fixed; top: 0; left: 0;
+    pointer-events: none;
+    z-index: 9999;
+    transition: transform 0.15s ease;
+    mix-blend-mode: multiply;
+  }
+  .cursor-follower {
+    width: 36px; height: 36px;
+    border: 1px solid var(--accent);
+    border-radius: 50%;
+    position: fixed; top: 0; left: 0;
+    pointer-events: none;
+    z-index: 9998;
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    mix-blend-mode: multiply;
+  }
+  .cursor.hover { transform: scale(2.5); }
+  .cursor-follower.hover { transform: translate(-50%, -50%) scale(1.8); border-color: var(--charcoal); }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 28px 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.4s ease;
+  }
+  nav.scrolled {
+    background: rgba(247, 244, 239, 0.95);
+    backdrop-filter: blur(12px);
+    padding: 18px 60px;
+    box-shadow: 0 1px 0 rgba(0,0,0,0.06);
+  }
+  .nav-logo {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: var(--warm-white);
+    text-decoration: none;
+    letter-spacing: 0.04em;
+    transition: color 0.3s;
+  }
+  nav.scrolled .nav-logo { color: var(--charcoal); }
+
+  .nav-links {
+    display: flex;
+    list-style: none;
+    gap: 48px;
+  }
+  .nav-links a {
+    text-decoration: none;
+    font-size: 0.75rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.85);
+    transition: color 0.3s;
+    position: relative;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px; left: 0;
+    width: 0; height: 1px;
+    background: var(--accent-light);
+    transition: width 0.3s ease;
+  }
+  .nav-links a:hover::after { width: 100%; }
+  nav.scrolled .nav-links a { color: var(--ash); }
+  nav.scrolled .nav-links a:hover { color: var(--charcoal); }
+  nav.scrolled .nav-links a::after { background: var(--accent); }
+
+  /* HAMBURGER */
+  .hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    padding: 4px;
+  }
+  .hamburger span {
+    display: block;
+    width: 26px; height: 1.5px;
+    background: var(--warm-white);
+    transition: all 0.3s ease;
+  }
+  nav.scrolled .hamburger span { background: var(--charcoal); }
+  .hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+  .hamburger.open span:nth-child(2) { opacity: 0; }
+  .hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+  .mobile-menu {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: var(--dark);
+    z-index: 99;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 48px;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+  .mobile-menu.open { display: flex; opacity: 1; }
+  .mobile-menu a {
+    font-family: var(--font-display);
+    font-size: 2.8rem;
+    font-weight: 300;
+    color: var(--cream);
+    text-decoration: none;
+    letter-spacing: 0.05em;
+    transition: color 0.3s;
+  }
+  .mobile-menu a:hover { color: var(--accent-light); }
+
+  /* HERO */
+  #hero {
+    position: relative;
+    width: 100%; height: 100vh;
+    overflow: hidden;
+  }
+  #three-canvas {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+  }
+  .hero-gradient-fallback {
+    display: none;
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: linear-gradient(135deg, #2D2926 0%, #4A3F36 40%, #8B7355 100%);
+  }
+  .hero-content {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: var(--warm-white);
+    z-index: 2;
+    pointer-events: none;
+  }
+  .hero-eyebrow {
+    font-size: 0.7rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--accent-light);
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: fadeUp 0.9s ease 0.3s forwards;
+  }
+  .hero-title {
+    font-family: var(--font-display);
+    font-size: clamp(3.5rem, 8vw, 8rem);
+    font-weight: 300;
+    line-height: 1.0;
+    letter-spacing: -0.01em;
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeUp 0.9s ease 0.5s forwards;
+  }
+  .hero-title em {
+    font-style: italic;
+    color: var(--accent-light);
+  }
+  .hero-sub {
+    font-size: 0.85rem;
+    letter-spacing: 0.12em;
+    color: rgba(255,255,255,0.65);
+    margin-bottom: 52px;
+    opacity: 0;
+    animation: fadeUp 0.9s ease 0.7s forwards;
+  }
+  .hero-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    color: var(--warm-white);
+    text-decoration: none;
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    border-bottom: 1px solid rgba(255,255,255,0.3);
+    padding-bottom: 8px;
+    opacity: 0;
+    animation: fadeUp 0.9s ease 0.9s forwards;
+    pointer-events: all;
+    transition: border-color 0.3s, gap 0.3s;
+  }
+  .hero-cta:hover { border-color: var(--accent-light); gap: 22px; }
+  .hero-cta svg { width: 18px; }
+
+  .hero-scroll {
+    position: absolute;
+    bottom: 40px; left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    z-index: 2;
+    opacity: 0;
+    animation: fadeUp 0.9s ease 1.2s forwards;
+  }
+  .hero-scroll span {
+    font-size: 0.6rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.45);
+  }
+  .scroll-line {
+    width: 1px; height: 50px;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.4), transparent);
+    animation: scrollLine 1.8s ease infinite;
+  }
+  @keyframes scrollLine {
+    0% { transform: scaleY(0); transform-origin: top; }
+    50% { transform: scaleY(1); transform-origin: top; }
+    51% { transform: scaleY(1); transform-origin: bottom; }
+    100% { transform: scaleY(0); transform-origin: bottom; }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* INTRO SECTION */
+  .intro-section {
+    padding: 140px 60px;
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 120px;
+    align-items: center;
+  }
+  .intro-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 28px;
+  }
+  .intro-title {
+    font-family: var(--font-display);
+    font-size: clamp(2.4rem, 4vw, 3.8rem);
+    font-weight: 300;
+    line-height: 1.15;
+    color: var(--charcoal);
+    margin-bottom: 32px;
+  }
+  .intro-title em { font-style: italic; color: var(--accent); }
+  .intro-body {
+    font-size: 0.95rem;
+    line-height: 1.9;
+    color: var(--ash);
+    margin-bottom: 40px;
+    max-width: 480px;
+  }
+  .btn-outline {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 32px;
+    border: 1px solid var(--charcoal);
+    font-family: var(--font-body);
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--charcoal);
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+  .btn-outline:hover {
+    background: var(--charcoal);
+    color: var(--cream);
+    gap: 20px;
+  }
+  .intro-image-wrap {
+    position: relative;
+  }
+  .intro-image-wrap img {
+    width: 100%;
+    height: 560px;
+    object-fit: cover;
+    display: block;
+  }
+  .intro-image-caption {
+    position: absolute;
+    bottom: -20px; right: -20px;
+    background: var(--accent);
+    color: var(--warm-white);
+    padding: 28px 32px;
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-style: italic;
+    max-width: 200px;
+    line-height: 1.4;
+  }
+
+  /* SERVICES PREVIEW */
+  .services-preview {
+    background: var(--charcoal);
+    padding: 120px 60px;
+  }
+  .section-header {
+    text-align: center;
+    margin-bottom: 80px;
+  }
+  .section-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--accent-light);
+    margin-bottom: 20px;
+    display: block;
+  }
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 300;
+    color: var(--warm-white);
+    line-height: 1.2;
+  }
+  .section-title em { font-style: italic; color: var(--accent-light); }
+
+  .services-grid {
+    max-width: 1300px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+  }
+  .service-card {
+    background: rgba(255,255,255,0.03);
+    padding: 56px 44px;
+    transition: background 0.4s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .service-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 0;
+    background: var(--accent);
+    transition: height 0.4s ease;
+  }
+  .service-card:hover { background: rgba(255,255,255,0.06); }
+  .service-card:hover::before { height: 100%; }
+  .service-number {
+    font-family: var(--font-display);
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: rgba(255,255,255,0.07);
+    line-height: 1;
+    margin-bottom: 28px;
+  }
+  .service-card h3 {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: var(--warm-white);
+    margin-bottom: 16px;
+    letter-spacing: 0.02em;
+  }
+  .service-card p {
+    font-size: 0.88rem;
+    line-height: 1.8;
+    color: rgba(255,255,255,0.45);
+    margin-bottom: 32px;
+  }
+  .service-link {
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent-light);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: gap 0.3s;
+  }
+  .service-link:hover { gap: 18px; }
+
+  /* PORTFOLIO PREVIEW */
+  .portfolio-preview {
+    padding: 120px 60px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  .portfolio-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    grid-template-rows: 380px 380px;
+    gap: 16px;
+    margin-top: 70px;
+  }
+  .portfolio-item {
+    position: relative;
+    overflow: hidden;
+    display: block;
+    text-decoration: none;
+  }
+  .portfolio-item:first-child {
+    grid-row: span 2;
+  }
+  .portfolio-item img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    transition: transform 0.7s ease;
+    display: block;
+  }
+  .portfolio-item:hover img { transform: scale(1.05); }
+  .portfolio-overlay {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    padding: 32px;
+    background: linear-gradient(to top, rgba(26,23,20,0.85), transparent);
+    transform: translateY(20px);
+    opacity: 0;
+    transition: all 0.4s ease;
+  }
+  .portfolio-item:hover .portfolio-overlay { transform: translateY(0); opacity: 1; }
+  .portfolio-overlay h4 {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    color: var(--warm-white);
+    font-weight: 400;
+    margin-bottom: 4px;
+  }
+  .portfolio-overlay span {
+    font-size: 0.72rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent-light);
+  }
+
+  .view-all-wrap {
+    text-align: center;
+    margin-top: 64px;
+  }
+
+  /* TESTIMONIAL */
+  .testimonial-section {
+    background: var(--accent);
+    padding: 100px 60px;
+    text-align: center;
+  }
+  .testimonial-quote {
+    font-family: var(--font-display);
+    font-size: clamp(1.6rem, 3vw, 2.6rem);
+    font-weight: 300;
+    font-style: italic;
+    color: var(--warm-white);
+    max-width: 860px;
+    margin: 0 auto 32px;
+    line-height: 1.45;
+  }
+  .testimonial-author {
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.65);
+  }
+
+  /* PROCESS SECTION */
+  .process-section {
+    padding: 120px 60px;
+    background: var(--warm-white);
+  }
+  .process-grid {
+    max-width: 1300px;
+    margin: 70px auto 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 48px;
+  }
+  .process-step { text-align: center; }
+  .process-step-num {
+    width: 56px; height: 56px;
+    border: 1px solid var(--stone);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 24px;
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    color: var(--accent);
+  }
+  .process-step h4 {
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    font-weight: 400;
+    color: var(--charcoal);
+    margin-bottom: 12px;
+  }
+  .process-step p {
+    font-size: 0.85rem;
+    line-height: 1.8;
+    color: var(--ash);
+  }
+
+  /* CTA BANNER */
+  .cta-banner {
+    position: relative;
+    overflow: hidden;
+    height: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  .cta-banner img {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    filter: brightness(0.35);
+  }
+  .cta-banner-content {
+    position: relative;
+    z-index: 2;
+  }
+  .cta-banner h2 {
+    font-family: var(--font-display);
+    font-size: clamp(2.2rem, 5vw, 4.5rem);
+    font-weight: 300;
+    color: var(--warm-white);
+    margin-bottom: 32px;
+    line-height: 1.1;
+  }
+  .cta-banner h2 em { font-style: italic; color: var(--accent-light); }
+  .btn-solid {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 40px;
+    background: var(--accent);
+    font-family: var(--font-body);
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--warm-white);
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+  .btn-solid:hover { background: var(--accent-light); gap: 20px; }
+
+  /* FOOTER */
+  footer {
+    background: var(--dark);
+    padding: 80px 60px 32px;
+  }
+  .footer-grid {
+    max-width: 1300px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr 1fr;
+    gap: 60px;
+    padding-bottom: 60px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .footer-logo {
+    font-family: var(--font-display);
+    font-size: 1.8rem;
+    font-weight: 300;
+    color: var(--cream);
+    text-decoration: none;
+    display: block;
+    margin-bottom: 20px;
+  }
+  .footer-tagline {
+    font-size: 0.83rem;
+    line-height: 1.8;
+    color: rgba(255,255,255,0.38);
+    max-width: 240px;
+  }
+  .footer-col h5 {
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent-light);
+    margin-bottom: 24px;
+  }
+  .footer-col ul { list-style: none; }
+  .footer-col ul li { margin-bottom: 12px; }
+  .footer-col ul li a {
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.45);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  .footer-col ul li a:hover { color: var(--cream); }
+  .footer-col address {
+    font-style: normal;
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.45);
+    line-height: 1.9;
+  }
+  .footer-bottom {
+    max-width: 1300px;
+    margin: 28px auto 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .footer-bottom span {
+    font-size: 0.72rem;
+    color: rgba(255,255,255,0.2);
+    letter-spacing: 0.05em;
+  }
+  .footer-bottom a {
+    color: rgba(255,255,255,0.2);
+    text-decoration: none;
+    font-size: 0.72rem;
+  }
+  .footer-bottom a:hover { color: rgba(255,255,255,0.4); }
+
+  /* SCROLL REVEAL */
+  .reveal {
+    opacity: 0;
+    transform: translateY(36px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 1024px) {
+    nav { padding: 24px 32px; }
+    nav.scrolled { padding: 16px 32px; }
+    .nav-links { display: none; }
+    .hamburger { display: flex; }
+    .intro-section { grid-template-columns: 1fr; gap: 60px; padding: 80px 32px; }
+    .intro-image-wrap img { height: 420px; }
+    .services-grid { grid-template-columns: 1fr; }
+    .portfolio-grid { grid-template-columns: 1fr; grid-template-rows: auto; }
+    .portfolio-item:first-child { grid-row: span 1; }
+    .portfolio-item { height: 280px; }
+    .process-grid { grid-template-columns: repeat(2, 1fr); }
+    .footer-grid { grid-template-columns: 1fr 1fr; gap: 40px; }
+    .services-preview, .portfolio-preview, .process-section { padding: 80px 32px; }
+    .testimonial-section { padding: 80px 32px; }
+    .cta-banner { height: 380px; padding: 0 32px; }
+    footer { padding: 60px 32px 24px; }
+  }
+
+  @media (max-width: 640px) {
+    .hero-gradient-fallback { display: block; }
+    #three-canvas { display: none; }
+    .process-grid { grid-template-columns: 1fr; }
+    .footer-grid { grid-template-columns: 1fr; }
+    .intro-image-caption { display: none; }
+    .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Custom Cursor -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-follower" id="cursor-follower"></div>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobile-menu">
+  <a href="index.html" onclick="closeMobileMenu()">Home</a>
+  <a href="about.html" onclick="closeMobileMenu()">About</a>
+  <a href="services.html" onclick="closeMobileMenu()">Services</a>
+  <a href="portfolio.html" onclick="closeMobileMenu()">Portfolio</a>
+  <a href="contact.html" onclick="closeMobileMenu()">Contact</a>
+</div>
+
+<!-- NAV -->
+<nav id="navbar">
+  <a href="index.html" class="nav-logo">Nordvik Studio</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="services.html">Services</a></li>
+    <li><a href="portfolio.html">Portfolio</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <canvas id="three-canvas"></canvas>
+  <div class="hero-gradient-fallback"></div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">Scandinavian Interior Design Studio</p>
+    <h1 class="hero-title">Where Space<br>Becomes <em>Story</em></h1>
+    <p class="hero-sub">Thoughtfully designed interiors for the modern home</p>
+    <a href="portfolio.html" class="hero-cta">
+      View Our Work
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+  </div>
+  <div class="hero-scroll">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- INTRO -->
+<section class="intro-section">
+  <div class="reveal">
+    <p class="intro-label">Our Philosophy</p>
+    <h2 class="intro-title">Beauty in<br><em>simplicity,</em><br>harmony in space</h2>
+    <p class="intro-body">At Nordvik Studio, we believe great design emerges from restraint. We create interiors that breathe — spaces infused with natural light, honest materials, and considered objects that stand the test of time.</p>
+    <a href="about.html" class="btn-outline">
+      Our Story
+      <svg width="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+  </div>
+  <div class="intro-image-wrap reveal">
+    <img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&auto=format&fit=crop&q=80" alt="Scandinavian living room" loading="lazy">
+    <div class="intro-image-caption">Twelve years of considered design</div>
+  </div>
+</section>
+
+<!-- SERVICES PREVIEW -->
+<section class="services-preview">
+  <div class="section-header reveal">
+    <span class="section-label">What We Do</span>
+    <h2 class="section-title">Design services<br>tailored to <em>your life</em></h2>
+  </div>
+  <div class="services-grid">
+    <div class="service-card reveal">
+      <div class="service-number">01</div>
+      <h3>Residential Design</h3>
+      <p>Complete interior transformations for homes, apartments, and new builds. From initial concept to final styling.</p>
+      <a href="services.html" class="service-link">Learn more <svg width="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+    </div>
+    <div class="service-card reveal">
+      <div class="service-number">02</div>
+      <h3>Space Planning</h3>
+      <p>Thoughtful spatial layouts that maximise flow, function, and natural light in every room.</p>
+      <a href="services.html" class="service-link">Learn more <svg width="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+    </div>
+    <div class="service-card reveal">
+      <div class="service-number">03</div>
+      <h3>Furniture Curation</h3>
+      <p>Sourcing and specifying furniture, textiles, and objects that bring your interior vision to life.</p>
+      <a href="services.html" class="service-link">Learn more <svg width="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+    </div>
+  </div>
+</section>
+
+<!-- PORTFOLIO PREVIEW -->
+<section class="portfolio-preview">
+  <div class="section-header reveal" style="text-align:left;">
+    <span class="section-label" style="color:var(--accent);">Selected Works</span>
+    <h2 class="section-title" style="color:var(--charcoal);">Spaces we've<br><em>brought to life</em></h2>
+  </div>
+  <div class="portfolio-grid">
+    <a href="portfolio.html" class="portfolio-item reveal">
+      <img src="https://images.unsplash.com/photo-1560185007-c5ca9d2c014d?w=900&auto=format&fit=crop&q=80" alt="Open plan living" loading="lazy">
+      <div class="portfolio-overlay">
+        <h4>The Lindqvist Residence</h4>
+        <span>Residential · Sydney</span>
+      </div>
+    </a>
+    <a href="portfolio.html" class="portfolio-item reveal">
+      <img src="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=700&auto=format&fit=crop&q=80" alt="Bedroom design" loading="lazy">
+      <div class="portfolio-overlay">
+        <h4>Harbour View Apartment</h4>
+        <span>Residential · Melbourne</span>
+      </div>
+    </a>
+    <a href="portfolio.html" class="portfolio-item reveal">
+      <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=700&auto=format&fit=crop&q=80" alt="Kitchen design" loading="lazy">
+      <div class="portfolio-overlay">
+        <h4>The Bergström Kitchen</h4>
+        <span>Kitchen · Brisbane</span>
+      </div>
+    </a>
+  </div>
+  <div class="view-all-wrap reveal">
+    <a href="portfolio.html" class="btn-outline">View Full Portfolio</a>
+  </div>
+</section>
+
+<!-- TESTIMONIAL -->
+<section class="testimonial-section">
+  <blockquote class="testimonial-quote reveal">
+    "Nordvik transformed our house into something we never thought possible — a space that genuinely feels like us. Every detail was considered with such care."
+  </blockquote>
+  <p class="testimonial-author reveal">— Anna & Erik Lindqvist, Sydney</p>
+</section>
+
+<!-- PROCESS -->
+<section class="process-section">
+  <div class="section-header reveal">
+    <span class="section-label" style="color:var(--accent);">How We Work</span>
+    <h2 class="section-title" style="color:var(--charcoal);">A calm, considered <em>process</em></h2>
+  </div>
+  <div class="process-grid">
+    <div class="process-step reveal">
+      <div class="process-step-num">1</div>
+      <h4>Discovery</h4>
+      <p>We listen deeply to understand how you live, what you love, and what your space needs.</p>
+    </div>
+    <div class="process-step reveal">
+      <div class="process-step-num">2</div>
+      <h4>Concept</h4>
+      <p>A tailored design direction presented with mood boards, spatial plans, and material palettes.</p>
+    </div>
+    <div class="process-step reveal">
+      <div class="process-step-num">3</div>
+      <h4>Refinement</h4>
+      <p>We collaborate until every element feels exactly right — nothing is settled without your approval.</p>
+    </div>
+    <div class="process-step reveal">
+      <div class="process-step-num">4</div>
+      <h4>Delivery</h4>
+      <p>Seamless project management through to final installation, styling, and handover.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BANNER -->
+<section class="cta-banner reveal">
+  <img src="https://images.unsplash.com/photo-1598928636135-d146006ff4be?w=1600&auto=format&fit=crop&q=80" alt="Interior" loading="lazy">
+  <div class="cta-banner-content">
+    <h2>Ready to transform<br><em>your space?</em></h2>
+    <a href="contact.html" class="btn-solid">
+      Start a Conversation
+      <svg width="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <a href="index.html" class="footer-logo">Nordvik Studio</a>
+      <p class="footer-tagline">Scandinavian-inspired interior design studio crafting thoughtful spaces across Australia.</p>
+    </div>
+    <div class="footer-col">
+      <h5>Pages</h5>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="services.html">Services</a></li>
+        <li><a href="portfolio.html">Portfolio</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Services</h5>
+      <ul>
+        <li><a href="services.html">Residential Design</a></li>
+        <li><a href="services.html">Space Planning</a></li>
+        <li><a href="services.html">Furniture Curation</a></li>
+        <li><a href="services.html">Styling & Staging</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Contact</h5>
+      <address>
+        Sydney, NSW<br>Australia<br><br>
+        hello@nordvikstudio.com.au<br>
+        +61 2 9000 0000
+      </address>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 Nordvik Studio. All rights reserved.</span>
+    <a href="https://daciscurtu.com" target="_blank" rel="noopener">Made by Daci Scurtu</a>
+  </div>
+</footer>
+
+<!-- THREE.JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// ===================== THREE.JS HERO =====================
+(function() {
+  const canvas = document.getElementById('three-canvas');
+  if (!canvas || window.innerWidth < 641) return;
+
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.shadowMap.enabled = true;
+
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x1a1714);
+  scene.fog = new THREE.Fog(0x1a1714, 12, 30);
+
+  const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+  camera.position.set(0, 1.5, 8);
+
+  // Lights
+  const ambient = new THREE.AmbientLight(0xfff4e8, 0.4);
+  scene.add(ambient);
+
+  const warmLight = new THREE.DirectionalLight(0xffd5a0, 1.2);
+  warmLight.position.set(4, 6, 3);
+  warmLight.castShadow = true;
+  scene.add(warmLight);
+
+  const accentLight = new THREE.PointLight(0xc4a882, 0.8, 12);
+  accentLight.position.set(-3, 2, 4);
+  scene.add(accentLight);
+
+  const rimLight = new THREE.DirectionalLight(0xaaccee, 0.3);
+  rimLight.position.set(-5, 3, -2);
+  scene.add(rimLight);
+
+  // Floor
+  const floorGeo = new THREE.PlaneGeometry(20, 20);
+  const floorMat = new THREE.MeshStandardMaterial({ color: 0x2a2420, roughness: 0.9, metalness: 0.05 });
+  const floor = new THREE.Mesh(floorGeo, floorMat);
+  floor.rotation.x = -Math.PI / 2;
+  floor.position.y = -2;
+  floor.receiveShadow = true;
+  scene.add(floor);
+
+  // Back wall
+  const wallGeo = new THREE.PlaneGeometry(20, 10);
+  const wallMat = new THREE.MeshStandardMaterial({ color: 0x1e1b18, roughness: 0.95 });
+  const wall = new THREE.Mesh(wallGeo, wallMat);
+  wall.position.z = -4; wall.position.y = 1;
+  scene.add(wall);
+
+  // Sofa — low, minimal
+  const sofaGroup = new THREE.Group();
+  const sofaMat = new THREE.MeshStandardMaterial({ color: 0x8b7355, roughness: 0.85 });
+  const sofaBase = new THREE.Mesh(new THREE.BoxGeometry(3.4, 0.4, 1.1), sofaMat);
+  sofaBase.castShadow = true; sofaBase.position.y = -1.6;
+  const sofaBack = new THREE.Mesh(new THREE.BoxGeometry(3.4, 0.7, 0.18), sofaMat);
+  sofaBack.position.set(0, -1.25, -0.46); sofaBack.castShadow = true;
+  const armL = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.55, 1.1), sofaMat);
+  armL.position.set(-1.61, -1.4, 0); armL.castShadow = true;
+  const armR = armL.clone(); armR.position.x = 1.61;
+  sofaGroup.add(sofaBase, sofaBack, armL, armR);
+
+  // Cushions
+  const cushMat = new THREE.MeshStandardMaterial({ color: 0xd4c4b0, roughness: 0.8 });
+  [-1.0, 0, 1.0].forEach(x => {
+    const cush = new THREE.Mesh(new THREE.BoxGeometry(0.85, 0.28, 0.62), cushMat);
+    cush.position.set(x, -1.24, 0); cush.castShadow = true;
+    sofaGroup.add(cush);
+  });
+  sofaGroup.position.set(0.3, 0, -1.5);
+  scene.add(sofaGroup);
+
+  // Coffee table
+  const tableMat = new THREE.MeshStandardMaterial({ color: 0x5c4a3a, roughness: 0.4, metalness: 0.1 });
+  const tableTop = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.06, 0.8), tableMat);
+  tableTop.position.set(0.3, -1.55, 0.3); tableTop.castShadow = true;
+  scene.add(tableTop);
+  [[-0.7, 0.2], [0.7, 0.2], [-0.7, -0.2], [0.7, -0.2]].forEach(([x, z]) => {
+    const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.38), tableMat);
+    leg.position.set(0.3 + x, -1.77, 0.3 + z);
+    scene.add(leg);
+  });
+
+  // Floor lamp
+  const lampGroup = new THREE.Group();
+  const poleMat = new THREE.MeshStandardMaterial({ color: 0x3a3530, metalness: 0.7, roughness: 0.3 });
+  const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 2.8), poleMat);
+  pole.position.y = -0.6;
+  const shade = new THREE.Mesh(new THREE.ConeGeometry(0.3, 0.45, 16, 1, true), new THREE.MeshStandardMaterial({ color: 0xe8ddd0, side: THREE.DoubleSide, roughness: 0.9 }));
+  shade.position.y = 0.82;
+  const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.06, 8, 8), new THREE.MeshStandardMaterial({ emissive: 0xffddaa, emissiveIntensity: 1.5, color: 0xffffee }));
+  bulb.position.y = 0.72;
+  lampGroup.add(pole, shade, bulb);
+  lampGroup.position.set(-2.2, 0.05, -1.1);
+  scene.add(lampGroup);
+
+  // Lamp glow
+  const lampGlow = new THREE.PointLight(0xffcc88, 0.9, 4);
+  lampGlow.position.set(-2.2, 0.77, -1.1);
+  scene.add(lampGlow);
+
+  // Side table + plant
+  const sideTableMat = new THREE.MeshStandardMaterial({ color: 0x6b5a46, roughness: 0.6 });
+  const sideTable = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.24, 0.46, 20), sideTableMat);
+  sideTable.position.set(-2.2, -1.78, 0.2);
+  scene.add(sideTable);
+
+  // Vase
+  const vaseMat = new THREE.MeshStandardMaterial({ color: 0x8fa098, roughness: 0.4, metalness: 0.15 });
+  const vase = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.07, 0.35, 12), vaseMat);
+  vase.position.set(-2.2, -1.36, 0.2); vase.castShadow = true;
+  scene.add(vase);
+
+  // Art frame on wall
+  const frameMat = new THREE.MeshStandardMaterial({ color: 0x2f2b27 });
+  const frame = new THREE.Mesh(new THREE.BoxGeometry(1.4, 1.9, 0.05), frameMat);
+  frame.position.set(1.8, -0.1, -3.95);
+  const artMat = new THREE.MeshStandardMaterial({ color: 0xd4c8bc, roughness: 1 });
+  const art = new THREE.Mesh(new THREE.PlaneGeometry(1.2, 1.65), artMat);
+  art.position.set(1.8, -0.1, -3.92);
+  scene.add(frame, art);
+
+  // Floating particles (dust motes)
+  const particleCount = 80;
+  const positions = new Float32Array(particleCount * 3);
+  for (let i = 0; i < particleCount; i++) {
+    positions[i * 3] = (Math.random() - 0.5) * 12;
+    positions[i * 3 + 1] = (Math.random() - 0.5) * 6;
+    positions[i * 3 + 2] = (Math.random() - 0.5) * 8;
+  }
+  const particleGeo = new THREE.BufferGeometry();
+  particleGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  const particleMat = new THREE.PointsMaterial({ color: 0xc4a882, size: 0.025, transparent: true, opacity: 0.45 });
+  const particles = new THREE.Points(particleGeo, particleMat);
+  scene.add(particles);
+
+  // Mouse interaction
+  let mouseX = 0, mouseY = 0;
+  document.addEventListener('mousemove', e => {
+    mouseX = (e.clientX / window.innerWidth - 0.5) * 0.6;
+    mouseY = (e.clientY / window.innerHeight - 0.5) * 0.3;
+  });
+
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+
+  let t = 0;
+  function animate() {
+    requestAnimationFrame(animate);
+    t += 0.004;
+    camera.position.x += (mouseX - camera.position.x) * 0.025;
+    camera.position.y += (-mouseY + 1.5 - camera.position.y) * 0.025;
+    camera.lookAt(0, -0.8, 0);
+    lampGlow.intensity = 0.9 + Math.sin(t * 2) * 0.08;
+    particles.rotation.y = t * 0.04;
+    renderer.render(scene, camera);
+  }
+  animate();
+})();
+
+// ===================== NAV SCROLL =====================
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  navbar.classList.toggle('scrolled', window.scrollY > 60);
+});
+
+// ===================== MOBILE MENU =====================
+function toggleMenu() {
+  const menu = document.getElementById('mobile-menu');
+  const ham = document.getElementById('hamburger');
+  menu.classList.toggle('open');
+  ham.classList.toggle('open');
+  document.body.style.overflow = menu.classList.contains('open') ? 'hidden' : '';
+}
+function closeMobileMenu() {
+  document.getElementById('mobile-menu').classList.remove('open');
+  document.getElementById('hamburger').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// ===================== SCROLL REVEAL =====================
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+}, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+reveals.forEach(r => observer.observe(r));
+
+// ===================== CUSTOM CURSOR =====================
+(function() {
+  if (window.innerWidth < 1025) return;
+  const cursor = document.getElementById('cursor');
+  const follower = document.getElementById('cursor-follower');
+  let fx = 0, fy = 0;
+  document.addEventListener('mousemove', e => {
+    cursor.style.transform = `translate(${e.clientX - 5}px, ${e.clientY - 5}px)`;
+    fx += (e.clientX - 18 - fx) * 0.12;
+    fy += (e.clientY - 18 - fy) * 0.12;
+    follower.style.transform = `translate(${fx}px, ${fy}px)`;
+  });
+  document.querySelectorAll('a, button').forEach(el => {
+    el.addEventListener('mouseenter', () => { cursor.classList.add('hover'); follower.classList.add('hover'); });
+    el.addEventListener('mouseleave', () => { cursor.classList.remove('hover'); follower.classList.remove('hover'); });
+  });
+  function updateFollower() { requestAnimationFrame(updateFollower); }
+  updateFollower();
+})();
+</script>
+</body>
+</html>
