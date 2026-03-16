@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact — Nordvik Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root { --cream: #F7F4EF; --warm-white: #FDFCFA; --stone: #C8BFB0; --ash: #8E8880; --charcoal: #2D2926; --dark: #1A1714; --accent: #8B7355; --accent-light: #C4A882; --font-display: 'Cormorant Garamond', serif; --font-body: 'Jost', sans-serif; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--cream); color: var(--charcoal); font-family: var(--font-body); font-weight: 300; cursor: none; overflow-x: hidden; }
+  .cursor { width: 10px; height: 10px; background: var(--charcoal); border-radius: 50%; position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9999; mix-blend-mode: multiply; }
+  .cursor-follower { width: 36px; height: 36px; border: 1px solid var(--accent); border-radius: 50%; position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9998; transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1); mix-blend-mode: multiply; }
+  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 22px 60px; display: flex; align-items: center; justify-content: space-between; background: rgba(247,244,239,0.95); backdrop-filter: blur(12px); box-shadow: 0 1px 0 rgba(0,0,0,0.06); }
+  .nav-logo { font-family: var(--font-display); font-size: 1.5rem; font-weight: 400; color: var(--charcoal); text-decoration: none; letter-spacing: 0.04em; }
+  .nav-links { display: flex; list-style: none; gap: 48px; }
+  .nav-links a { text-decoration: none; font-size: 0.75rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ash); transition: color 0.3s; position: relative; }
+  .nav-links a::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 1px; background: var(--accent); transition: width 0.3s ease; }
+  .nav-links a:hover { color: var(--charcoal); }
+  .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
+  .nav-links a.active { color: var(--charcoal); }
+  .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; }
+  .hamburger span { display: block; width: 26px; height: 1.5px; background: var(--charcoal); transition: all 0.3s ease; }
+  .hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+  .hamburger.open span:nth-child(2) { opacity: 0; }
+  .hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+  .mobile-menu { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--dark); z-index: 99; flex-direction: column; align-items: center; justify-content: center; gap: 48px; opacity: 0; transition: opacity 0.4s ease; }
+  .mobile-menu.open { display: flex; opacity: 1; }
+  .mobile-menu a { font-family: var(--font-display); font-size: 2.8rem; font-weight: 300; color: var(--cream); text-decoration: none; transition: color 0.3s; }
+  .mobile-menu a:hover { color: var(--accent-light); }
+
+  /* PAGE HERO */
+  .page-hero { padding: 160px 60px 100px; background: var(--warm-white); position: relative; border-bottom: 1px solid rgba(0,0,0,0.06); }
+  .page-hero-inner { max-width: 1300px; margin: 0 auto; display: flex; justify-content: space-between; align-items: flex-end; gap: 60px; }
+  .page-label { font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); margin-bottom: 24px; display: block; }
+  .page-title { font-family: var(--font-display); font-size: clamp(3rem, 6vw, 6.5rem); font-weight: 300; color: var(--charcoal); line-height: 1.05; }
+  .page-title em { font-style: italic; color: var(--accent); }
+  .hero-sub { max-width: 300px; font-size: 0.9rem; line-height: 1.9; color: var(--ash); padding-bottom: 12px; flex-shrink: 0; }
+
+  /* CONTACT SECTION */
+  .contact-wrapper {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 100px 60px;
+    display: grid;
+    grid-template-columns: 1fr 1.3fr;
+    gap: 120px;
+    align-items: start;
+  }
+  .contact-left {}
+  .contact-intro-label { font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; display: block; }
+  .contact-intro-title { font-family: var(--font-display); font-size: clamp(1.8rem, 3vw, 2.8rem); font-weight: 300; line-height: 1.25; margin-bottom: 24px; }
+  .contact-intro-title em { font-style: italic; color: var(--accent); }
+  .contact-intro-body { font-size: 0.9rem; line-height: 1.9; color: var(--ash); margin-bottom: 52px; }
+  .contact-details {}
+  .contact-detail-item { display: flex; gap: 20px; align-items: flex-start; margin-bottom: 36px; }
+  .contact-detail-icon { width: 40px; height: 40px; border: 1px solid var(--stone); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--accent); }
+  .contact-detail-icon svg { width: 16px; }
+  .contact-detail-text h5 { font-size: 0.62rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--ash); margin-bottom: 6px; }
+  .contact-detail-text p, .contact-detail-text a { font-size: 0.9rem; color: var(--charcoal); line-height: 1.7; text-decoration: none; transition: color 0.3s; }
+  .contact-detail-text a:hover { color: var(--accent); }
+
+  /* FORM */
+  .contact-form-wrap {}
+  .form-title { font-family: var(--font-display); font-size: 1.6rem; font-weight: 400; color: var(--charcoal); margin-bottom: 36px; }
+  .form-title em { font-style: italic; color: var(--accent); }
+
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 24px; }
+  .form-group { margin-bottom: 24px; }
+  .form-group.full { grid-column: span 2; }
+  .form-group label { display: block; font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ash); margin-bottom: 10px; }
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    width: 100%;
+    background: var(--warm-white);
+    border: 1px solid var(--stone);
+    border-radius: 0;
+    padding: 14px 18px;
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    font-weight: 300;
+    color: var(--charcoal);
+    outline: none;
+    transition: border-color 0.3s ease;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus { border-color: var(--accent); background: #fff; }
+  .form-group textarea { min-height: 140px; resize: vertical; }
+  .form-group select { cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238E8880' stroke-width='1.5' fill='none'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; padding-right: 40px; }
+  .form-submit { margin-top: 8px; }
+  .btn-submit { display: inline-flex; align-items: center; gap: 14px; padding: 16px 44px; background: var(--charcoal); font-family: var(--font-body); font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--warm-white); border: none; cursor: pointer; transition: all 0.3s ease; width: 100%; justify-content: center; }
+  .btn-submit:hover { background: var(--accent); gap: 22px; }
+  .form-note { font-size: 0.75rem; color: var(--stone); margin-top: 12px; text-align: center; }
+
+  /* SUCCESS */
+  .form-success { display: none; text-align: center; padding: 60px 40px; border: 1px solid var(--stone); }
+  .form-success h3 { font-family: var(--font-display); font-size: 2rem; font-weight: 300; color: var(--charcoal); margin-bottom: 12px; }
+  .form-success h3 em { font-style: italic; color: var(--accent); }
+  .form-success p { font-size: 0.88rem; color: var(--ash); line-height: 1.8; }
+
+  /* MAP */
+  .map-section { background: var(--charcoal); }
+  .map-wrapper { position: relative; }
+  .map-wrapper iframe { display: block; width: 100%; height: 500px; filter: grayscale(30%) contrast(1.1); }
+  .map-label-overlay {
+    position: absolute;
+    top: 40px; left: 60px;
+    background: var(--cream);
+    padding: 28px 36px;
+    z-index: 1;
+    max-width: 280px;
+  }
+  .map-label-overlay h4 { font-family: var(--font-display); font-size: 1.2rem; font-weight: 400; color: var(--charcoal); margin-bottom: 8px; }
+  .map-label-overlay p { font-size: 0.82rem; color: var(--ash); line-height: 1.8; }
+
+  footer { background: var(--dark); padding: 80px 60px 32px; }
+  .footer-grid { max-width: 1300px; margin: 0 auto; display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 60px; padding-bottom: 60px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .footer-logo { font-family: var(--font-display); font-size: 1.8rem; font-weight: 300; color: var(--cream); text-decoration: none; display: block; margin-bottom: 20px; }
+  .footer-tagline { font-size: 0.83rem; line-height: 1.8; color: rgba(255,255,255,0.38); max-width: 240px; }
+  .footer-col h5 { font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent-light); margin-bottom: 24px; }
+  .footer-col ul { list-style: none; }
+  .footer-col ul li { margin-bottom: 12px; }
+  .footer-col ul li a { font-size: 0.85rem; color: rgba(255,255,255,0.45); text-decoration: none; transition: color 0.3s; }
+  .footer-col ul li a:hover { color: var(--cream); }
+  .footer-col address { font-style: normal; font-size: 0.85rem; color: rgba(255,255,255,0.45); line-height: 1.9; }
+  .footer-bottom { max-width: 1300px; margin: 28px auto 0; display: flex; justify-content: space-between; align-items: center; }
+  .footer-bottom span { font-size: 0.72rem; color: rgba(255,255,255,0.2); }
+  .footer-bottom a { color: rgba(255,255,255,0.2); text-decoration: none; font-size: 0.72rem; }
+  .footer-bottom a:hover { color: rgba(255,255,255,0.4); }
+
+  .reveal { opacity: 0; transform: translateY(36px); transition: opacity 0.8s ease, transform 0.8s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 1024px) {
+    nav { padding: 20px 32px; }
+    .nav-links { display: none; }
+    .hamburger { display: flex; }
+    .page-hero { padding: 120px 32px 80px; }
+    .page-hero-inner { flex-direction: column; }
+    .contact-wrapper { grid-template-columns: 1fr; gap: 60px; padding: 60px 32px; }
+    .map-label-overlay { left: 20px; top: 20px; }
+    .footer-grid { grid-template-columns: 1fr 1fr; gap: 40px; }
+    footer { padding: 60px 32px 24px; }
+  }
+  @media (max-width: 640px) {
+    .form-grid { grid-template-columns: 1fr; }
+    .form-group.full { grid-column: span 1; }
+    .footer-grid { grid-template-columns: 1fr; }
+    .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
+    .map-label-overlay { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-follower" id="cursor-follower"></div>
+<div class="mobile-menu" id="mobile-menu">
+  <a href="index.html" onclick="closeMobileMenu()">Home</a>
+  <a href="about.html" onclick="closeMobileMenu()">About</a>
+  <a href="services.html" onclick="closeMobileMenu()">Services</a>
+  <a href="portfolio.html" onclick="closeMobileMenu()">Portfolio</a>
+  <a href="contact.html" onclick="closeMobileMenu()">Contact</a>
+</div>
+<nav>
+  <a href="index.html" class="nav-logo">Nordvik Studio</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="services.html">Services</a></li>
+    <li><a href="portfolio.html">Portfolio</a></li>
+    <li><a href="contact.html" class="active">Contact</a></li>
+  </ul>
+  <div class="hamburger" id="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></div>
+</nav>
+
+<section class="page-hero">
+  <div class="page-hero-inner">
+    <div>
+      <span class="page-label">Get in Touch</span>
+      <h1 class="page-title">Let's talk about<br><em>your space</em></h1>
+    </div>
+    <p class="hero-sub">We'd love to hear about your project. Fill in the form and we'll be in touch within 24 hours.</p>
+  </div>
+</section>
+
+<div class="contact-wrapper">
+  <div class="contact-left reveal">
+    <span class="contact-intro-label">Studio Contact</span>
+    <h2 class="contact-intro-title">Every great space starts with a <em>conversation</em></h2>
+    <p class="contact-intro-body">Whether you have a clear vision or just a feeling that your space needs to change, we're here to listen. We offer a complimentary 20-minute discovery call for all new enquiries.</p>
+
+    <div class="contact-details">
+      <div class="contact-detail-item">
+        <div class="contact-detail-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+        </div>
+        <div class="contact-detail-text">
+          <h5>Email</h5>
+          <a href="mailto:hello@nordvikstudio.com.au">hello@nordvikstudio.com.au</a>
+        </div>
+      </div>
+      <div class="contact-detail-item">
+        <div class="contact-detail-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+        </div>
+        <div class="contact-detail-text">
+          <h5>Phone</h5>
+          <a href="tel:+61290000000">+61 2 9000 0000</a>
+        </div>
+      </div>
+      <div class="contact-detail-item">
+        <div class="contact-detail-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        </div>
+        <div class="contact-detail-text">
+          <h5>Studio</h5>
+          <p>Level 4, 80 William Street<br>Sydney NSW 2011</p>
+        </div>
+      </div>
+      <div class="contact-detail-item">
+        <div class="contact-detail-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </div>
+        <div class="contact-detail-text">
+          <h5>Studio Hours</h5>
+          <p>Monday – Friday: 9:00am – 5:30pm<br>Saturday: By appointment</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="reveal">
+    <h3 class="form-title">Tell us about your <em>project</em></h3>
+    <!-- FORMSPREE FORM — replace mzdjbvpp with client's Formspree ID when deploying for client -->
+    <form id="contact-form" action="https://formspree.io/f/mzdjbvpp" method="POST">
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="fname">First Name *</label>
+          <input type="text" id="fname" name="first_name" required placeholder="Emma">
+        </div>
+        <div class="form-group">
+          <label for="lname">Last Name *</label>
+          <input type="text" id="lname" name="last_name" required placeholder="Lindqvist">
+        </div>
+        <div class="form-group">
+          <label for="email">Email Address *</label>
+          <input type="email" id="email" name="email" required placeholder="emma@email.com.au">
+        </div>
+        <div class="form-group">
+          <label for="phone">Phone Number</label>
+          <input type="tel" id="phone" name="phone" placeholder="+61 4XX XXX XXX">
+        </div>
+        <div class="form-group full">
+          <label for="service">Service Interested In</label>
+          <select id="service" name="service">
+            <option value="">Select a service...</option>
+            <option value="residential">Residential Interior Design</option>
+            <option value="space-planning">Space Planning</option>
+            <option value="furniture">Furniture Curation</option>
+            <option value="styling">Styling & Staging</option>
+            <option value="hourly">Design Hour (Consultation)</option>
+            <option value="unsure">Not Sure Yet</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label for="budget">Approximate Budget</label>
+          <select id="budget" name="budget">
+            <option value="">Select a range...</option>
+            <option value="under5k">Under $5,000</option>
+            <option value="5-15k">$5,000 – $15,000</option>
+            <option value="15-30k">$15,000 – $30,000</option>
+            <option value="30-50k">$30,000 – $50,000</option>
+            <option value="50k+">$50,000+</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label for="message">Tell Us About Your Project *</label>
+          <textarea id="message" name="message" required placeholder="Describe your space, what you're hoping to achieve, and any other details you'd like to share..."></textarea>
+        </div>
+        <div class="form-group full form-submit">
+          <button type="submit" class="btn-submit">
+            Send Enquiry
+            <svg width="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+          <p class="form-note">We respond to all enquiries within 24 business hours.</p>
+        </div>
+      </div>
+    </form>
+    <div class="form-success" id="form-success">
+      <h3>Thank you for <em>reaching out</em></h3>
+      <p>We've received your enquiry and will be in touch within 24 hours. We're looking forward to hearing more about your project.</p>
+    </div>
+  </div>
+</div>
+
+<!-- MAP SECTION -->
+<section class="map-section reveal">
+  <div class="map-wrapper">
+    <div class="map-label-overlay">
+      <h4>Nordvik Studio</h4>
+      <p>Level 4, 80 William Street<br>Sydney NSW 2011<br><br>Mon–Fri: 9:00am – 5:30pm</p>
+    </div>
+    <!-- Google Maps embed — replace with client's actual location coordinates -->
+    <iframe
+      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3312.4!2d151.2165!3d-33.8756!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6b12ae401f85af8d%3A0xf03f6b9f2e8a64b6!2s80%20William%20St%2C%20Woolloomooloo%20NSW%202011!5e0!3m2!1sen!2sau!4v1700000000000"
+      allowfullscreen=""
+      loading="lazy"
+      referrerpolicy="no-referrer-when-downgrade"
+      title="Nordvik Studio Location">
+    </iframe>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-grid">
+    <div><a href="index.html" class="footer-logo">Nordvik Studio</a><p class="footer-tagline">Scandinavian-inspired interior design studio crafting thoughtful spaces across Australia.</p></div>
+    <div class="footer-col"><h5>Pages</h5><ul><li><a href="index.html">Home</a></li><li><a href="about.html">About</a></li><li><a href="services.html">Services</a></li><li><a href="portfolio.html">Portfolio</a></li><li><a href="contact.html">Contact</a></li></ul></div>
+    <div class="footer-col"><h5>Services</h5><ul><li><a href="services.html">Residential Design</a></li><li><a href="services.html">Space Planning</a></li><li><a href="services.html">Furniture Curation</a></li><li><a href="services.html">Styling & Staging</a></li></ul></div>
+    <div class="footer-col"><h5>Contact</h5><address>Sydney, NSW<br>Australia<br><br>hello@nordvikstudio.com.au<br>+61 2 9000 0000</address></div>
+  </div>
+  <div class="footer-bottom"><span>© 2025 Nordvik Studio. All rights reserved.</span><a href="https://daciscurtu.com" target="_blank" rel="noopener">Made by Daci Scurtu</a></div>
+</footer>
+
+<script>
+  // Form submission with Formspree
+  const form = document.getElementById('contact-form');
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const btn = form.querySelector('.btn-submit');
+    btn.textContent = 'Sending...';
+    btn.disabled = true;
+    try {
+      const res = await fetch(form.action, { method: 'POST', body: new FormData(form), headers: { 'Accept': 'application/json' } });
+      if (res.ok) {
+        form.style.display = 'none';
+        document.getElementById('form-success').style.display = 'block';
+      } else {
+        btn.textContent = 'Error — Try Again';
+        btn.disabled = false;
+      }
+    } catch (err) {
+      btn.textContent = 'Error — Try Again';
+      btn.disabled = false;
+    }
+  });
+
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => { entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } }); }, { threshold: 0.1 });
+  reveals.forEach(r => observer.observe(r));
+  function toggleMenu() { const m = document.getElementById('mobile-menu'); const h = document.getElementById('hamburger'); m.classList.toggle('open'); h.classList.toggle('open'); document.body.style.overflow = m.classList.contains('open') ? 'hidden' : ''; }
+  function closeMobileMenu() { document.getElementById('mobile-menu').classList.remove('open'); document.getElementById('hamburger').classList.remove('open'); document.body.style.overflow = ''; }
+  if (window.innerWidth >= 1025) { const c = document.getElementById('cursor'); const f = document.getElementById('cursor-follower'); document.addEventListener('mousemove', e => { c.style.transform = `translate(${e.clientX-5}px,${e.clientY-5}px)`; f.style.transform = `translate(${e.clientX-18}px,${e.clientY-18}px)`; }); }
+</script>
+</body>
+</html>
