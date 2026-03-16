@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About — Nordvik Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #F7F4EF;
+    --warm-white: #FDFCFA;
+    --stone: #C8BFB0;
+    --ash: #8E8880;
+    --charcoal: #2D2926;
+    --dark: #1A1714;
+    --accent: #8B7355;
+    --accent-light: #C4A882;
+    --font-display: 'Cormorant Garamond', serif;
+    --font-body: 'Jost', sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--cream); color: var(--charcoal); font-family: var(--font-body); font-weight: 300; cursor: none; overflow-x: hidden; }
+  .cursor { width: 10px; height: 10px; background: var(--charcoal); border-radius: 50%; position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9999; mix-blend-mode: multiply; }
+  .cursor-follower { width: 36px; height: 36px; border: 1px solid var(--accent); border-radius: 50%; position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9998; transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1); mix-blend-mode: multiply; }
+
+  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 22px 60px; display: flex; align-items: center; justify-content: space-between; background: rgba(247, 244, 239, 0.95); backdrop-filter: blur(12px); box-shadow: 0 1px 0 rgba(0,0,0,0.06); }
+  .nav-logo { font-family: var(--font-display); font-size: 1.5rem; font-weight: 400; color: var(--charcoal); text-decoration: none; letter-spacing: 0.04em; }
+  .nav-links { display: flex; list-style: none; gap: 48px; }
+  .nav-links a { text-decoration: none; font-size: 0.75rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ash); transition: color 0.3s; position: relative; }
+  .nav-links a::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 1px; background: var(--accent); transition: width 0.3s ease; }
+  .nav-links a:hover { color: var(--charcoal); }
+  .nav-links a:hover::after { width: 100%; }
+  .nav-links a.active { color: var(--charcoal); }
+  .nav-links a.active::after { width: 100%; }
+  .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; }
+  .hamburger span { display: block; width: 26px; height: 1.5px; background: var(--charcoal); transition: all 0.3s ease; }
+  .hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+  .hamburger.open span:nth-child(2) { opacity: 0; }
+  .hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+  .mobile-menu { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--dark); z-index: 99; flex-direction: column; align-items: center; justify-content: center; gap: 48px; opacity: 0; transition: opacity 0.4s ease; }
+  .mobile-menu.open { display: flex; opacity: 1; }
+  .mobile-menu a { font-family: var(--font-display); font-size: 2.8rem; font-weight: 300; color: var(--cream); text-decoration: none; transition: color 0.3s; }
+  .mobile-menu a:hover { color: var(--accent-light); }
+
+  /* PAGE HERO */
+  .page-hero {
+    padding: 160px 60px 100px;
+    background: var(--charcoal);
+    position: relative;
+    overflow: hidden;
+  }
+  .page-hero::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 50%; height: 100%;
+    background: url('https://images.unsplash.com/photo-1616137422495-1e9e46e2aa1e?w=900&auto=format&fit=crop&q=80') center/cover;
+    opacity: 0.18;
+  }
+  .page-hero-inner {
+    max-width: 1300px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+  .page-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--accent-light);
+    margin-bottom: 24px;
+    display: block;
+  }
+  .page-title {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 6vw, 6.5rem);
+    font-weight: 300;
+    color: var(--warm-white);
+    line-height: 1.05;
+    max-width: 700px;
+  }
+  .page-title em { font-style: italic; color: var(--accent-light); }
+
+  /* STORY SECTION */
+  .story-section {
+    padding: 120px 60px;
+    max-width: 1300px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 120px;
+    align-items: start;
+  }
+  .story-text h2 {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    font-weight: 300;
+    line-height: 1.25;
+    margin-bottom: 32px;
+    color: var(--charcoal);
+  }
+  .story-text h2 em { font-style: italic; color: var(--accent); }
+  .story-text p {
+    font-size: 0.93rem;
+    line-height: 1.95;
+    color: var(--ash);
+    margin-bottom: 24px;
+  }
+  .story-image-wrap { position: sticky; top: 100px; }
+  .story-image-wrap img { width: 100%; height: 600px; object-fit: cover; display: block; }
+  .story-caption {
+    padding: 24px 0;
+    border-top: 1px solid var(--stone);
+    margin-top: 24px;
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-style: italic;
+    color: var(--ash);
+  }
+
+  /* VALUES */
+  .values-section {
+    background: var(--warm-white);
+    padding: 120px 60px;
+  }
+  .section-header { text-align: center; margin-bottom: 80px; }
+  .section-label-dark { font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; display: block; }
+  .section-title { font-family: var(--font-display); font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 300; color: var(--charcoal); line-height: 1.2; }
+  .section-title em { font-style: italic; color: var(--accent); }
+  .values-grid {
+    max-width: 1300px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 48px;
+  }
+  .value-card {
+    padding: 48px 40px;
+    background: var(--cream);
+    border-top: 2px solid transparent;
+    transition: border-color 0.3s ease;
+  }
+  .value-card:hover { border-color: var(--accent); }
+  .value-icon {
+    width: 44px; height: 44px;
+    margin-bottom: 28px;
+    color: var(--accent);
+  }
+  .value-card h3 {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    font-weight: 400;
+    color: var(--charcoal);
+    margin-bottom: 14px;
+  }
+  .value-card p { font-size: 0.88rem; line-height: 1.85; color: var(--ash); }
+
+  /* TEAM */
+  .team-section {
+    padding: 120px 60px;
+    max-width: 1300px;
+    margin: 0 auto;
+  }
+  .team-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 48px;
+    margin-top: 70px;
+  }
+  .team-card img {
+    width: 100%;
+    height: 380px;
+    object-fit: cover;
+    object-position: top;
+    display: block;
+    filter: grayscale(20%);
+    transition: filter 0.4s ease;
+  }
+  .team-card:hover img { filter: grayscale(0%); }
+  .team-info { padding: 24px 0; }
+  .team-info h4 { font-family: var(--font-display); font-size: 1.3rem; font-weight: 400; color: var(--charcoal); margin-bottom: 4px; }
+  .team-info span { font-size: 0.7rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); }
+  .team-info p { font-size: 0.85rem; line-height: 1.8; color: var(--ash); margin-top: 12px; }
+
+  /* STATS */
+  .stats-section {
+    background: var(--accent);
+    padding: 80px 60px;
+  }
+  .stats-grid {
+    max-width: 1300px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 48px;
+    text-align: center;
+  }
+  .stat-num {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 5vw, 5rem);
+    font-weight: 300;
+    color: var(--warm-white);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .stat-label { font-size: 0.75rem; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.6); }
+
+  /* CTA */
+  .about-cta {
+    padding: 120px 60px;
+    text-align: center;
+    background: var(--charcoal);
+  }
+  .about-cta h2 { font-family: var(--font-display); font-size: clamp(2.2rem, 4vw, 4rem); font-weight: 300; color: var(--warm-white); margin-bottom: 20px; }
+  .about-cta h2 em { font-style: italic; color: var(--accent-light); }
+  .about-cta p { font-size: 0.92rem; color: rgba(255,255,255,0.5); margin-bottom: 48px; max-width: 500px; margin-left: auto; margin-right: auto; line-height: 1.8; }
+  .btn-solid { display: inline-flex; align-items: center; gap: 12px; padding: 16px 40px; background: var(--accent); font-family: var(--font-body); font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--warm-white); text-decoration: none; transition: all 0.3s ease; }
+  .btn-solid:hover { background: var(--accent-light); gap: 20px; }
+
+  /* FOOTER */
+  footer { background: var(--dark); padding: 80px 60px 32px; }
+  .footer-grid { max-width: 1300px; margin: 0 auto; display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 60px; padding-bottom: 60px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .footer-logo { font-family: var(--font-display); font-size: 1.8rem; font-weight: 300; color: var(--cream); text-decoration: none; display: block; margin-bottom: 20px; }
+  .footer-tagline { font-size: 0.83rem; line-height: 1.8; color: rgba(255,255,255,0.38); max-width: 240px; }
+  .footer-col h5 { font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent-light); margin-bottom: 24px; }
+  .footer-col ul { list-style: none; }
+  .footer-col ul li { margin-bottom: 12px; }
+  .footer-col ul li a { font-size: 0.85rem; color: rgba(255,255,255,0.45); text-decoration: none; transition: color 0.3s; }
+  .footer-col ul li a:hover { color: var(--cream); }
+  .footer-col address { font-style: normal; font-size: 0.85rem; color: rgba(255,255,255,0.45); line-height: 1.9; }
+  .footer-bottom { max-width: 1300px; margin: 28px auto 0; display: flex; justify-content: space-between; align-items: center; }
+  .footer-bottom span { font-size: 0.72rem; color: rgba(255,255,255,0.2); }
+  .footer-bottom a { color: rgba(255,255,255,0.2); text-decoration: none; font-size: 0.72rem; }
+  .footer-bottom a:hover { color: rgba(255,255,255,0.4); }
+
+  .reveal { opacity: 0; transform: translateY(36px); transition: opacity 0.8s ease, transform 0.8s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 1024px) {
+    nav { padding: 20px 32px; }
+    .nav-links { display: none; }
+    .hamburger { display: flex; }
+    .page-hero { padding: 120px 32px 80px; }
+    .story-section { grid-template-columns: 1fr; gap: 60px; padding: 80px 32px; }
+    .story-image-wrap { position: static; }
+    .values-grid, .team-grid { grid-template-columns: 1fr 1fr; }
+    .stats-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+    .values-section, .team-section, .about-cta { padding: 80px 32px; }
+    .stats-section { padding: 60px 32px; }
+    .footer-grid { grid-template-columns: 1fr 1fr; gap: 40px; }
+    footer { padding: 60px 32px 24px; }
+  }
+  @media (max-width: 640px) {
+    .values-grid, .team-grid { grid-template-columns: 1fr; }
+    .stats-grid { grid-template-columns: 1fr 1fr; }
+    .footer-grid { grid-template-columns: 1fr; }
+    .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-follower" id="cursor-follower"></div>
+
+<div class="mobile-menu" id="mobile-menu">
+  <a href="index.html" onclick="closeMobileMenu()">Home</a>
+  <a href="about.html" onclick="closeMobileMenu()">About</a>
+  <a href="services.html" onclick="closeMobileMenu()">Services</a>
+  <a href="portfolio.html" onclick="closeMobileMenu()">Portfolio</a>
+  <a href="contact.html" onclick="closeMobileMenu()">Contact</a>
+</div>
+
+<nav>
+  <a href="index.html" class="nav-logo">Nordvik Studio</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="about.html" class="active">About</a></li>
+    <li><a href="services.html">Services</a></li>
+    <li><a href="portfolio.html">Portfolio</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<section class="page-hero">
+  <div class="page-hero-inner">
+    <span class="page-label">Our Story</span>
+    <h1 class="page-title">Design rooted in <em>honesty</em> and craft</h1>
+  </div>
+</section>
+
+<section class="story-section">
+  <div class="story-text reveal">
+    <h2>We create spaces that feel <em>entirely yours</em></h2>
+    <p>Nordvik Studio was founded in 2012 by Emma Lindqvist, a Norwegian-born designer who moved to Sydney and found herself caught between two worlds: the restrained beauty of Scandinavian design and the warmth, light, and openness of Australian living.</p>
+    <p>That tension became a creative force. Our studio has spent over a decade refining an approach that honours natural materials, breathable spaces, and the particular quality of light that defines life in the Southern Hemisphere.</p>
+    <p>We are a small, dedicated team of designers and spatial thinkers. We take on a limited number of projects each year — not because we can't grow, but because we believe deeply in the quality of attention every space deserves.</p>
+    <p>Our clients are people who understand that a home isn't just functional — it is the stage on which a life is lived. They come to us ready to slow down, think deeply, and invest in something lasting.</p>
+  </div>
+  <div class="story-image-wrap reveal">
+    <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&auto=format&fit=crop&q=80" alt="Our studio" loading="lazy">
+    <p class="story-caption">"The best rooms don't shout. They breathe." — Emma Lindqvist</p>
+  </div>
+</section>
+
+<section class="values-section">
+  <div class="section-header reveal">
+    <span class="section-label-dark">What We Believe</span>
+    <h2 class="section-title">The values that <em>guide every room</em></h2>
+  </div>
+  <div class="values-grid">
+    <div class="value-card reveal">
+      <svg class="value-icon" viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="22" cy="22" r="18"/><path d="M22 8v28M8 22h28"/></svg>
+      <h3>Restraint</h3>
+      <p>We edit with purpose. Every object in a Nordvik room earns its place. Less, but better — always.</p>
+    </div>
+    <div class="value-card reveal">
+      <svg class="value-icon" viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M6 38L22 8l16 30H6z"/></svg>
+      <h3>Materiality</h3>
+      <p>We believe in oak, linen, stone, and light. Natural materials age gracefully and connect us to the world outside.</p>
+    </div>
+    <div class="value-card reveal">
+      <svg class="value-icon" viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="8" y="8" width="28" height="28" rx="2"/><path d="M8 22h28M22 8v28"/></svg>
+      <h3>Function</h3>
+      <p>Beauty without purpose is decoration. We design spaces that work for how you actually live — today and tomorrow.</p>
+    </div>
+  </div>
+</section>
+
+<section class="stats-section">
+  <div class="stats-grid">
+    <div class="reveal"><div class="stat-num">12</div><div class="stat-label">Years in Practice</div></div>
+    <div class="reveal"><div class="stat-num">140+</div><div class="stat-label">Completed Projects</div></div>
+    <div class="reveal"><div class="stat-num">4</div><div class="stat-label">Design Awards</div></div>
+    <div class="reveal"><div class="stat-num">98%</div><div class="stat-label">Client Satisfaction</div></div>
+  </div>
+</section>
+
+<section class="team-section">
+  <div class="section-header reveal">
+    <span class="section-label-dark">The Team</span>
+    <h2 class="section-title">The people behind <em>every space</em></h2>
+  </div>
+  <div class="team-grid">
+    <div class="team-card reveal">
+      <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=600&auto=format&fit=crop&q=80" alt="Emma Lindqvist" loading="lazy">
+      <div class="team-info">
+        <h4>Emma Lindqvist</h4>
+        <span>Founder & Lead Designer</span>
+        <p>Originally from Bergen, Norway. Studied at the Oslo School of Architecture. Fifteen years of experience across residential, hospitality, and commercial design.</p>
+      </div>
+    </div>
+    <div class="team-card reveal">
+      <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&auto=format&fit=crop&q=80" alt="Marcus Webb" loading="lazy">
+      <div class="team-info">
+        <h4>Marcus Webb</h4>
+        <span>Senior Interior Designer</span>
+        <p>Melbourne-born, with a background in architecture and a fine arts degree. Specialises in materiality, bespoke joinery, and kitchen design.</p>
+      </div>
+    </div>
+    <div class="team-card reveal">
+      <img src="https://images.unsplash.com/photo-1573496799652-408c2ac9fe98?w=600&auto=format&fit=crop&q=80" alt="Suki Tanaka" loading="lazy">
+      <div class="team-info">
+        <h4>Suki Tanaka</h4>
+        <span>Design & Client Liaison</span>
+        <p>Sydney-based with experience in Japanese wabi-sabi interiors and Scandinavian minimalism. The studio's expert in textiles, lighting, and styling.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="about-cta">
+  <h2 class="reveal">Let's create something <em>extraordinary</em></h2>
+  <p class="reveal">Every great space starts with a conversation. Tell us about your project and we'll show you what's possible.</p>
+  <a href="contact.html" class="btn-solid reveal">Get in Touch <svg width="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+</section>
+
+<footer>
+  <div class="footer-grid">
+    <div>
+      <a href="index.html" class="footer-logo">Nordvik Studio</a>
+      <p class="footer-tagline">Scandinavian-inspired interior design studio crafting thoughtful spaces across Australia.</p>
+    </div>
+    <div class="footer-col"><h5>Pages</h5><ul><li><a href="index.html">Home</a></li><li><a href="about.html">About</a></li><li><a href="services.html">Services</a></li><li><a href="portfolio.html">Portfolio</a></li><li><a href="contact.html">Contact</a></li></ul></div>
+    <div class="footer-col"><h5>Services</h5><ul><li><a href="services.html">Residential Design</a></li><li><a href="services.html">Space Planning</a></li><li><a href="services.html">Furniture Curation</a></li><li><a href="services.html">Styling & Staging</a></li></ul></div>
+    <div class="footer-col"><h5>Contact</h5><address>Sydney, NSW<br>Australia<br><br>hello@nordvikstudio.com.au<br>+61 2 9000 0000</address></div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 Nordvik Studio. All rights reserved.</span>
+    <a href="https://daciscurtu.com" target="_blank" rel="noopener">Made by Daci Scurtu</a>
+  </div>
+</footer>
+
+<script>
+  const navbar = document.querySelector('nav');
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }});
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+  reveals.forEach(r => observer.observe(r));
+  function toggleMenu() {
+    const m = document.getElementById('mobile-menu'); const h = document.getElementById('hamburger');
+    m.classList.toggle('open'); h.classList.toggle('open'); document.body.style.overflow = m.classList.contains('open') ? 'hidden' : '';
+  }
+  function closeMobileMenu() { document.getElementById('mobile-menu').classList.remove('open'); document.getElementById('hamburger').classList.remove('open'); document.body.style.overflow = ''; }
+  if (window.innerWidth >= 1025) {
+    const cursor = document.getElementById('cursor'); const follower = document.getElementById('cursor-follower');
+    document.addEventListener('mousemove', e => { cursor.style.transform = `translate(${e.clientX-5}px,${e.clientY-5}px)`; follower.style.transform = `translate(${e.clientX-18}px,${e.clientY-18}px)`; });
+  }
+</script>
+</body>
+</html>
